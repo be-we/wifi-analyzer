@@ -20,17 +20,25 @@ from gi.repository import Adw, Gio, GLib, Gtk
 
 if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+    from wifi_analyzer import __version__
     from wifi_analyzer.accessibility import AccessibilityManager
     from wifi_analyzer.export_helper import export_csv, export_html_report, export_json
 else:
+    from . import __version__
     from .accessibility import AccessibilityManager
     from .export_helper import export_csv, export_html_report, export_json
 
 APP_ID = "io.github.yeager.WifiAnalyzer"
 GETTEXT_DOMAIN = "wifi-analyzer"
-_locale_dir = os.environ.get("WIFI_ANALYZER_LOCALE_DIR", "/app/share/locale")
-if not os.path.isdir(_locale_dir):
-    _locale_dir = "/usr/share/locale"
+_locale_dir = os.environ.get("WIFI_ANALYZER_LOCALE_DIR")
+if not _locale_dir or not os.path.isdir(_locale_dir):
+    _package_locale_dir = Path(__file__).resolve().parent / "locale"
+    if _package_locale_dir.is_dir():
+        _locale_dir = str(_package_locale_dir)
+    elif os.path.isdir("/app/share/locale"):
+        _locale_dir = "/app/share/locale"
+    else:
+        _locale_dir = "/usr/share/locale"
 gettext.bindtextdomain(GETTEXT_DOMAIN, _locale_dir)
 gettext.textdomain(GETTEXT_DOMAIN)
 _ = gettext.gettext
@@ -1108,7 +1116,7 @@ class WifiAnalyzerWindow(Adw.ApplicationWindow):
         about = Adw.AboutDialog(
             application_name="WiFi Analyzer",
             application_icon=APP_ID,
-            version="0.1.17",
+            version=__version__,
             developer_name="Daniel Nylander",
             license_type=Gtk.License.GPL_3_0,
             website="https://www.danielnylander.se",

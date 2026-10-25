@@ -121,3 +121,16 @@ def test_wifi_problem_includes_a_remedy():
     assert "weak" in title.lower()
     assert "closer" in remedy.lower()
     assert wifi_problem([{"ssid": "Office", "connected": True, "signal_pct": 70}]) is None
+
+
+def test_release_version_is_consistent():
+    import re
+
+    root = Path(__file__).parents[1]
+    project = (root / "pyproject.toml").read_text(encoding="utf-8")
+    init = (root / "src" / "wifi_analyzer" / "__init__.py").read_text(encoding="utf-8")
+    app = (root / "src" / "wifi_analyzer" / "app.py").read_text(encoding="utf-8")
+    project_version = re.search(r'(?m)^version = "([^"]+)"', project).group(1)
+    package_version = re.search(r'__version__ = "([^"]+)"', init).group(1)
+    assert project_version == package_version
+    assert 'version=__version__,' in app

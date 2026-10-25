@@ -32,6 +32,16 @@ Built with GTK4/Adwaita. Part of the [Danne L10n Suite](https://github.com/yeage
 
 ## Installation
 
+### PyPI (Debian/Ubuntu)
+
+GTK, libadwaita, PyGObject and Pycairo use native system libraries, so install
+them from your distribution before installing the Python package:
+
+```bash
+sudo apt install python3-gi python3-cairo gir1.2-gtk-4.0 gir1.2-adw-1 network-manager iw pipx
+pipx install --system-site-packages wifi-analyzer
+```
+
 ### Debian/Ubuntu
 
 `wifi-analyzer` is distributed through the [Danne L10n Suite APT repository](https://github.com/yeager/debian-repo), not the default Debian or Ubuntu repositories. Add the repository before installing:

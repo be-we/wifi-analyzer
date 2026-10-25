@@ -1,0 +1,52 @@
+name: Publish to PyPI
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    container: debian:stable
+    steps:
+      - name: Install test dependencies
+        run: |
+          apt-get update
+          DEBIAN_FRONTEND=noninteractive apt-get install -y \
+            ca-certificates git gettext python3-gi python3-cairo \
+            gir1.2-gtk-4.0 gir1.2-adw-1 python3-pytest
+      - uses: actions/checkout@v4
+      - name: Compile translations
+        run: python3 scripts/compile_translations.py
+      - name: Run tests
+        env:
+          PYTHONPATH: src
+        run: pytest -q
+
+  publish:
+    needs: test
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gettext
+          python -m pip install --upgrade build twine
+      - name: Compile translations
+        run: python3 scripts/compile_translations.py
+      - name: Build distributions
+        run: python -m build
+      - name: Check distributions
+        run: python -m twine check dist/*
+      - name: Publish distributions
+        uses: pypa/gh-action-pypi-publish@release/v1

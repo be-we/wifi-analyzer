@@ -4,16 +4,23 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "wifi-analyzer"
-version = "0.1.18"
+version = "0.1.19"
 description = "WiFi Analyzer — GTK4/Adwaita app for WiFi network analysis"
 readme = "README.md"
 license = "GPL-3.0-or-later"
 requires-python = ">=3.10"
 authors = [{ name = "Daniel Nylander" }]
-dependencies = ["PyGObject>=3.42"]
+
+[project.urls]
+Homepage = "https://github.com/yeager/wifi-analyzer"
+Repository = "https://github.com/yeager/wifi-analyzer"
+"Bug Tracker" = "https://github.com/yeager/wifi-analyzer/issues"
 
 [project.scripts]
 wifi-analyzer = "wifi_analyzer.app:main"
+
+[tool.setuptools.package-data]
+wifi_analyzer = ["locale/*/LC_MESSAGES/*.mo"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
